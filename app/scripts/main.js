@@ -107,7 +107,7 @@ function buildPlayer() {
 		},
 		playerVars: {
 			'modestbranding': 1,
-			'controls': 1,
+			'controls': 0,
 			'disablekb': 1,
 			'iv_load_policy': 3,
 			'rel': 0,
@@ -163,7 +163,7 @@ function onPlayerReady(event) {
 var done = false;
 function onPlayerStateChange(event) {
 		if (event.data == YT.PlayerState.PLAYING && !done) {
-			event.target.setVolume(0);
+			event.target.setVolume(100);
 			done = true;
 		}
 
