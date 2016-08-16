@@ -19,22 +19,22 @@ var program = {
 							};
 
 var videos = [
-								'M7lc1UVf-VE',
-								'M7lc1UVf-VE',
-								'M7lc1UVf-VE',
-								'M7lc1UVf-VE',
-								'M7lc1UVf-VE',
+								'zpMVXWGtkVw',
+								'pKPIIANZqsc',
+								'rt3-suQlP6Q',
+								'YkTZSWLT5JQ',
+								'8ZV1dpn_ZdA',
+								'7zOBv4l6_O8',
+								'1UxZ1Oia1VA',
+								'vov92LltM0c',
+								'1N01zpp2YRM',
 								'X7JQu06ylFM',
-								'M7lc1UVf-VE',
-								'X7JQu06ylFM',
-								'M7lc1UVf-VE',
-								'X7JQu06ylFM',
-								'M7lc1UVf-VE',
-								'X7JQu06ylFM',
-								'M7lc1UVf-VE',
-								'X7JQu06ylFM',
-								'M7lc1UVf-VE',
-								'X7JQu06ylFM'
+								'dC8aJpfuZ7c',
+								'-NnPfI-td_A',
+								'r9drIoldc0E',
+								'_L1Kdj0Kr44',
+								'NYNHyU4fDlI',
+								'kh4b7aeHdBI'
 ];
 
 var starttime_global = 0;

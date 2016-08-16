@@ -1,3 +1,5 @@
+@import url(https://fonts.googleapis.com/css?family=Cutive+Mono);
+
 .browserupgrade {
   margin: 0.2em 0;
   background: #ccc;
@@ -7,7 +9,7 @@
 
 /* Space out content a bit */
 body {
-  font-family: monospace;
+  font-family: 'Cutive Mono', monospace;
   background-color: black;
   padding-top: 0px;
   padding-bottom: 20px;
@@ -20,9 +22,12 @@ body {
 }
 
 #header h1 {
+  font-weight: normal;
+  font-size: 2em;
   margin: 0;
   padding: 0;
   vertical-align: middle;
+  text-transform: uppercase;
 }
 
 #player-container {
@@ -39,11 +44,19 @@ body {
   height: 100%;
 }
 
+.current {
+  color: #00FF0C;
+}
+
 .program {
   color: #fff;
   padding: 14px 40px
 }
 
 .program dt {
+  display: inline-block;
+}
+
+.program dd {
   display: inline-block;
 }
