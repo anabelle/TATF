@@ -61,14 +61,15 @@ var currentvideo = -1;
 
 function nowPlaying() {
 	clearTimeouts();
+	clearInterval( interval );
 	var count = 0;
-	var currentvideo = null;
+	currentvideo = -1;
 	var currenttime = Date.parse('now').getTime()/1000;
 	for (var key in program) {
 		 if (program.hasOwnProperty(key)) {
 				var starttime = Date.parse( key ).getTime()/1000;
 				// console.log( starttime );
-				if( currenttime > starttime ){
+				if( currenttime >= starttime ){
 					currentvideo = count;
 					starttime_global = starttime;
 				}else{
@@ -79,9 +80,7 @@ function nowPlaying() {
 		    count = count + 1;
 		 }
 	}
-	console.log( currentvideo );
-	$('.current').removeClass('current');
-	$('dt:nth-of-type('+ (currentvideo + 1 ) +'), dd:nth-of-type('+ (currentvideo + 1 ) +')').addClass('current');
+	console.log( 'Now playing: ' + currentvideo );
 	return currentvideo
 	//console.log( key, program[key] );
 	//console.log( "video: " + count );
@@ -99,7 +98,17 @@ var player = {};
 function buildPlayer() {
 	$('#player-container').show();
 	var play = nowPlaying();
+
+	if( play == 0 ){
+		// play = 1
+	}
 	console.log( 'play: ' + play );
+
+	$('.current').removeClass('current');
+	$('dt:nth-of-type('+ (play + 1 ) +'), dd:nth-of-type('+ (play + 1 ) +')').addClass('current');
+	$('#nownext').text('NOW');
+	$('#talk').text( $('dd.current').text() );
+
 	player = new YT.Player('player', {
 		height: '100%',
 		width: '100%',
@@ -120,7 +129,6 @@ function buildPlayer() {
 	});
 }
 
-
 var interval = 0;
 function syncPlayer( event ) {
 	console.log( 'global: ' + starttime_global);
@@ -134,29 +142,39 @@ function syncPlayer( event ) {
 	if( timeInto < duracion ){
 		player.seekTo( timeInto );
 		event.target.playVideo();
-		$('#nownext').text('NOW');
-		$('#talk').text( $('dd.current').text() );
 		clearInterval( interval );
 		interval = setInterval( function(){ countdown( event ) }, 1000 );
 	}else{
+		clearInterval( interval );
 		talkEnded();
 	}
 }
 
 function countdown_upcoming( upto ){
-	var upcomingvideo = currentvideo;
+
+	var currenttime = Date.parse('now').getTime()/1000;
+	var upcomingvideo = currentvideo + 1;
+
+	if( upcomingvideo == 1 ){
+		upcomingvideo = 1;
+	}
 	console.log( 'counting to upcoming' );
 	console.log( upcomingvideo );
-	if( upcomingvideo == -1 ){
-		upcomingvideo = 0;
-	}
+	//if( upcomingvideo == 1 ){
+	//	upcomingvideo = 0;
+	//}
 
 	$('.current').removeClass('current');
 	$('dt:nth-of-type('+ (upcomingvideo + 1 ) +'), dd:nth-of-type('+ (upcomingvideo + 1 ) +')').addClass('current');
 
 	$('#talk').text( $('dd:nth-of-type('+ ( upcomingvideo + 1 ) + ' )').text() );
 
-	$('#countdown').text( $('dt:nth-of-type('+ ( upcomingvideo + 1 ) + ' )').text() );
+	var next_time = $('dt:nth-of-type('+ ( upcomingvideo + 1 ) + ' )').text();
+
+	$('#talk').text( $('dd:nth-of-type('+ ( upcomingvideo + 1 ) + ' )').text() );
+	
+	var tiempo = (new Date).clearTime().addSeconds( parseInt( Date.parse( next_time ).getTime()/1000 - currenttime ) ).toString('H:mm:ss');
+	$('#countdown').text( tiempo );
 }
 
 function countdown( event ){
@@ -172,13 +190,9 @@ function countdown( event ){
 
 function talkEnded() {
 	$('#nownext').text('UPCOMING');
-	$('dd.current').removeClass('current').next('dd').addClass('current');
-	$('dt.current').removeClass('current').next('dt').addClass('current');
-	$('#talk').text( $('dd.current').text() );
 	clearInterval( interval );
-	interval = setInterval( function(){ countdown_upcoming() }, 1000 );
+	interval = setInterval( function(){ countdown_upcoming( 1 ) }, 1000 );
 	$('#player-container').hide();
-	$('#nownext').text('UPCOMING');
 }
 
 // 2. This code loads the IFrame Player API code asynchronously.
