@@ -52,7 +52,7 @@ function buildProgram() {
 	var currenttime = Date.parse('now').getTime()/1000;	
 	for (var key in program) {
 		 if (program.hasOwnProperty(key)) {
-		    $('.program dl').append( '<dt>' + key + '</dt><dd>' + program[key] + '</dd>' );
+		    $('.program dl').append( '<dt>' + key + '&nbsp;</dt><dd>' + program[key] + '</dd><br/>' );
 		 }
 	}
 }
@@ -62,13 +62,14 @@ var currentvideo = -1;
 function nowPlaying() {
 	clearTimeouts();
 	var count = 0;
+	var currentvideo = null;
 	var currenttime = Date.parse('now').getTime()/1000;
 	for (var key in program) {
 		 if (program.hasOwnProperty(key)) {
 				var starttime = Date.parse( key ).getTime()/1000;
 				// console.log( starttime );
 				if( currenttime > starttime ){
-					var currentvideo = count;
+					currentvideo = count;
 					starttime_global = starttime;
 				}else{
 					var remaining = starttime - currenttime;
@@ -79,6 +80,8 @@ function nowPlaying() {
 		 }
 	}
 	console.log( currentvideo );
+	$('.current').removeClass('current');
+	$('dt:nth-of-type('+ (currentvideo + 1 ) +'), dd:nth-of-type('+ (currentvideo + 1 ) +')').addClass('current');
 	return currentvideo
 	//console.log( key, program[key] );
 	//console.log( "video: " + count );
@@ -117,25 +120,65 @@ function buildPlayer() {
 	});
 }
 
+
+var interval = 0;
 function syncPlayer( event ) {
 	console.log( 'global: ' + starttime_global);
 
 	var currenttime = Date.parse('now').getTime()/1000;
-  var duracion = event.target.getDuration();
+	var duracion = event.target.getDuration();
 
-  var timeInto = currenttime - starttime_global;
-  console.log( 'timeInto: ' + timeInto );
+	var timeInto = currenttime - starttime_global;
+	console.log( 'timeInto: ' + timeInto );
 	
 	if( timeInto < duracion ){
 		player.seekTo( timeInto );
 		event.target.playVideo();
+		$('#nownext').text('NOW');
+		$('#talk').text( $('dd.current').text() );
+		clearInterval( interval );
+		interval = setInterval( function(){ countdown( event ) }, 1000 );
 	}else{
 		talkEnded();
 	}
 }
 
+function countdown_upcoming( upto ){
+	var upcomingvideo = currentvideo;
+	console.log( 'counting to upcoming' );
+	console.log( upcomingvideo );
+	if( upcomingvideo == -1 ){
+		upcomingvideo = 0;
+	}
+
+	$('.current').removeClass('current');
+	$('dt:nth-of-type('+ (upcomingvideo + 1 ) +'), dd:nth-of-type('+ (upcomingvideo + 1 ) +')').addClass('current');
+
+	$('#talk').text( $('dd:nth-of-type('+ ( upcomingvideo + 1 ) + ' )').text() );
+
+	$('#countdown').text( $('dt:nth-of-type('+ ( upcomingvideo + 1 ) + ' )').text() );
+}
+
+function countdown( event ){
+	console.log('updating countdown');
+
+	var currenttime = Date.parse('now').getTime()/1000;
+	var duracion = event.target.getDuration();
+
+	var timeInto = currenttime - starttime_global;
+	var tiempo = (new Date).clearTime().addSeconds( parseInt( duracion - timeInto ) ).toString('H:mm:ss');
+	$('#countdown').text( tiempo );
+}
+
 function talkEnded() {
+	$('#nownext').text('UPCOMING');
+	$('dd.current').removeClass('current').next('dd').addClass('current');
+	$('dt.current').removeClass('current').next('dt').addClass('current');
+	$('#talk').text( $('dd.current').text() );
+	clearInterval( interval );
+	interval = setInterval( function(){ countdown_upcoming() }, 1000 );
 	$('#player-container').hide();
+	$('#nownext').text('UPCOMING');
 }
 
 // 2. This code loads the IFrame Player API code asynchronously.
